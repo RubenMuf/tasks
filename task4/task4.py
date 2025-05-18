@@ -1,22 +1,16 @@
-# Задание №4 Чистое
-# nums = [1, 2, 3]
-# nums = [1, 10, 2, 9]
-with open('nums.txt', encoding='utf-8') as file:
-    nums = [int(i.strip()) for i in file.readlines()]
-    # print(nums)
+import sys
+nums_path = sys.argv[-1]
 
-def chek(num, ls):
+with open(nums_path, encoding='utf-8') as file:
+    nums = [int(i.strip()) for i in file.readlines()]
+
+def check(num, ls):
     count = 0
-    # print(num, '- num')
-    # print()
     for i in ls[:]:
         if i > num:
-            # print(i - num)
             count += i - num
         elif i < num:
-            # print(num - i)
             count += num - i
-    # print(count, '- count')
     return count
 
-print(min(chek(i, nums) for i in nums))
+print(min(check(i, nums) for i in nums))

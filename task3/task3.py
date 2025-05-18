@@ -1,55 +1,35 @@
 # Задача №3 выполнено
+
+import sys
 import json
-# values = 'values.json'
-# tests = 'tests.json'
-# report = 'report.json'
+tests_path, values_path, reports_path = sys.argv[1:]
+# print(tests_path, values_path, reports_path)
 
-values = input()
-tests = input()
-report = input()
+def recursive_fill(items_list, values_dict):
+    for item in items_list:
+        if item['id'] in values_dict and not item['value']:
+            item['value'] = values_dict[item['id']]
+        if 'values' in item:
+            recursive_fill(item['values'], values_dict)
 
-try:
-    with open(values, encoding='utf-8') as file, open(tests, encoding='utf-8') as file1, open(report, 'w') as file2:
 
-        values_file = eval(file.read())
-        tests_json = eval(file1.read())
+def fill_values(tests, values):
+    values_dict = {}
+    for item in values['values']:
+        values_dict[item['id']] = item['value']
+    recursive_fill(tests['tests'], values_dict)
 
-        '''Понятно, что тут нужна рекурсия, но вложенность настолько беспорядочная,
-        что решил закостылить. Памяти конечно жуть сколько. '''
-        js = json.dumps(tests_json)
-        while '\"values\":' in js:
-            js = js.replace('\"values\":', '')
-        while '[' in js:
-            js = js.replace('[', '')
-        while ']' in js:
-            js = js.replace(']', '')
-        while '  ' in js:
-            js = js.replace( '  ', ' ')
-        while '\", {\"' in js:
-            js = js.replace('\", {\"', '\"}, {\"')
-        while '}}' in js:
-            js = js.replace('}}', '}')
-        js = js.replace('{\"tests\": ', '')
-        js = '[' + js + ']'
-        # print(js)
 
-        res = eval(js)
+with open(tests_path, 'r', encoding='utf-8') as file1:
+    tests = json.load(file1)
+    print(tests)
 
-        for i in res:
-            i['value'] = i.get('value', '')
-        # print(res)
+with open(values_path, 'r', encoding='utf-8') as file2:
+    values = json.load(file2)
+    print(values)
 
-        for i in values_file['values']:
-            for j in res:
-                if i['id'] == j['id']:
-                    j['value'] = i['value']
+fill_values(tests, values)
 
-        res = {"tests": res}
-        json.dump(res, file2, indent=2)
-
-except FileNotFoundError:
-     print("Невозможно открыть файл")
-except:
-    print("Ошибка при работе с файлом")
-finally:
-    print(file.closed)
+with open(reports_path, 'w', encoding='utf-8') as file3:
+    json.dump(tests, file3, indent=2, ensure_ascii=False)
+# print('ok')
