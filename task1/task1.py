@@ -2,6 +2,10 @@
 import sys
 
 n, m = map(int, sys.argv[1:])
+
+if n < 1 or m < 1:
+    raise Exception('Введенные цифры должны быть только положительными')
+# print('работаем дальше')
 if m == 0:
     print('Путь отсутствует.')
 else:
@@ -20,4 +24,5 @@ else:
         ls_inter.append(ls_nums[:m])
     res = ''.join([str(i[0]) for i in ls_inter])
     print(res)
+
 
